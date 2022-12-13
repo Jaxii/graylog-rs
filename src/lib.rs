@@ -1,13 +1,38 @@
 #![crate_type = "lib"]
 use std::{
     io::Write,
-    net::TcpStream,
+    net::{TcpStream, Ipv4Addr},
     time::{SystemTime, UNIX_EPOCH},
     error::Error, fmt::{self, Display},
 };
 
 use serde::{Serialize, Deserialize};
 use serde_json::json;
+
+struct Connection {
+    ip: &'static str, //todo: accept ipv4, ipv6, or web domain
+    port: u16,
+}
+
+impl Connection {
+    //todo
+    //default port of 3306
+    //ip parameter should be able to take ipv4, ipv6, and web domains
+
+    fn default(&self) -> Self {
+        Connection { ip: "255.255.255.255", port: 3306 }
+    }
+
+}
+
+struct Logger {
+    id: u32,
+    connection: Option<Connection>,
+}
+
+impl Logger {
+    //todo
+}
 
 // Struct representing a log message.
 #[derive(Serialize, Deserialize)]

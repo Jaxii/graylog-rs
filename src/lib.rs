@@ -6,6 +6,7 @@ use std::{
     error::Error, fmt::{self, Display},
 };
 
+use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use serde_json::json;
 
@@ -37,9 +38,9 @@ impl Logger {
 // Struct representing a log message.
 #[derive(Serialize, Deserialize)]
 struct LogMessage {
-    message: String,
-    timestamp: u64,
+    timestamp: DateTime<Utc>,
     level: Level,
+    message: String,
 }
 
 // Enum laying out possible message types
@@ -84,9 +85,7 @@ fn log(message: &str, level: Level) -> Result<(), Box<dyn Error>> {
     // Create a new log message with the current timestamp.
     let log_message = LogMessage {
         message: message.to_string(),
-        timestamp: SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap().as_secs(),
+        timestamp: Utc::now(),
         level,
     };
 

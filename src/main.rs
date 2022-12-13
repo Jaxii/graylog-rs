@@ -2,7 +2,7 @@ use std::{
     io::Write,
     net::TcpStream,
     time::{SystemTime, UNIX_EPOCH},
-    error::Error,
+    error::Error, fmt::{self, Display},
 };
 use serde::{Serialize, Deserialize};
 use serde_json::json;
@@ -12,7 +12,31 @@ use serde_json::json;
 struct LogMessage {
     message: String,
     timestamp: u64,
-    level: String,
+    level: Level,
+}
+
+// Enum laying out possible message types
+#[derive(Serialize, Deserialize)]
+enum Level {
+    INFO,
+    WARNING,
+    ERROR,
+    DEBUG,
+    Custom(String),
+}
+
+impl Display for Level {
+
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Level::INFO => write!(f, "INFO"),
+            Level::WARNING => write!(f, "WARNING"),
+            Level::ERROR => write!(f, "ERROR"),
+            Level::DEBUG => write!(f, "DEBUG"),
+            Level::Custom(str) => write!(f, "{}", str),
+        }
+    }
+
 }
 
 // Function to send a log message to the graylog server.
@@ -29,14 +53,14 @@ fn send_log_message(log_message: &LogMessage) -> Result<(), Box<dyn Error>> {
 }
 
 // Function to create and send a log message with the specified message and level.
-fn log(message: &str, level: &str) -> Result<(), Box<dyn Error>> {
+fn log(message: &str, level: Level) -> Result<(), Box<dyn Error>> {
     // Create a new log message with the current timestamp.
     let log_message = LogMessage {
         message: message.to_string(),
         timestamp: SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap().as_secs(),
-        level: level.to_string(),
+        level,
     };
 
     // Send the log message to the graylog server.
@@ -45,7 +69,18 @@ fn log(message: &str, level: &str) -> Result<(), Box<dyn Error>> {
 
 // Example usage of the logger.
 fn main() -> Result<(), Box<dyn Error>> {
-    log("Hello, world!", "info")?;
+    
+    log("Hello, world!", Level::INFO)?;
     
     Ok(())
+}
+
+#[test]
+fn test_levels() {
+
+    assert_eq!("INFO", Level::INFO.to_string());
+    assert_eq!("WARNING", Level::WARNING.to_string());
+    assert_eq!("ERROR", Level::ERROR.to_string());
+    assert_eq!("DEBUG", Level::DEBUG.to_string());
+
 }

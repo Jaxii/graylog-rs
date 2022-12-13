@@ -1,3 +1,4 @@
+#![crate_type = "lib"]
 use std::{
     io::Write,
     net::TcpStream,
@@ -68,13 +69,13 @@ fn log(message: &str, level: Level) -> Result<(), Box<dyn Error>> {
     send_log_message(&log_message)
 }
 
-// Example usage of the logger.
-fn main() -> Result<(), Box<dyn Error>> {
+// // Example usage of the logger.
+// fn main() -> Result<(), Box<dyn Error>> {
     
-    log("Hello, world!", Level::INFO)?;
+//     log("Hello, world!", Level::INFO)?;
     
-    Ok(())
-}
+//     Ok(())
+// }
 
 #[test]
 fn test_levels() {

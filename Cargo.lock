@@ -121,7 +121,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "graylog-rs"
+name = "graylog"
 version = "0.1.0"
 dependencies = [
  "chrono",

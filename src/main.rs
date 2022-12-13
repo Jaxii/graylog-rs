@@ -4,6 +4,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
     error::Error, fmt::{self, Display},
 };
+
 use serde::{Serialize, Deserialize};
 use serde_json::json;
 
@@ -16,7 +17,7 @@ struct LogMessage {
 }
 
 // Enum laying out possible message types
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 enum Level {
     INFO,
     WARNING,

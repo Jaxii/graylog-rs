@@ -1,4 +1,5 @@
 #![crate_type = "lib"]
+#![warn(unreachable_pub)]
 use std::{
     io::{Write, self},
     net::{TcpStream, Ipv4Addr},
@@ -10,7 +11,7 @@ use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use serde_json::json;
 
-struct Connection {
+pub struct Connection {
     ip: &'static str, //todo: accept ipv4, ipv6, or web domain
     port: u16,
 }
@@ -32,7 +33,7 @@ impl Connection {
     }
 
 }
-struct Logger {
+pub struct Logger {
     id: u32,
     connection: Option<Connection>,
 }
@@ -67,7 +68,7 @@ impl Logger {
 
 // Struct representing a log message.
 #[derive(Serialize, Deserialize)]
-struct LogMessage {
+pub struct LogMessage {
     timestamp: DateTime<Utc>,
     level: Level,
     message: String,
@@ -75,7 +76,7 @@ struct LogMessage {
 
 // Enum laying out possible message types
 #[derive(Serialize, Deserialize, Clone)]
-enum Level {
+pub enum Level {
     INFO,
     WARNING,
     ERROR,
@@ -98,7 +99,7 @@ impl Display for Level {
 }
 
 // Function to send a log message to the graylog server.
-fn send_log_message(log_message: &LogMessage) -> Result<(), Box<dyn Error>> {
+pub fn send_log_message(log_message: &LogMessage) -> Result<(), Box<dyn Error>> {
     // Establish a connection to the graylog server.
     let mut stream = TcpStream::connect("graylog.example.com:12201")?;
 
@@ -111,7 +112,7 @@ fn send_log_message(log_message: &LogMessage) -> Result<(), Box<dyn Error>> {
 }
 
 // Function to create and send a log message with the specified message and level.
-fn log(message: &str, level: Level) -> Result<(), Box<dyn Error>> {
+pub fn log(message: &str, level: Level) -> Result<(), Box<dyn Error>> {
     // Create a new log message with the current timestamp.
     let log_message = LogMessage {
         message: message.to_string(),

@@ -28,7 +28,7 @@ impl Connection {
     }
 
     fn connect(&self) -> io::Result<TcpStream> {
-        TcpStream::connect(self.ip.to_string() + ":" + &self.port.to_string())
+        TcpStream::connect(format!("{}:{}", self.ip, self.port))
     }
 
 }

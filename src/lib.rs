@@ -1,6 +1,6 @@
 #![crate_type = "lib"]
 use std::{
-    io::Write,
+    io::{Write, self},
     net::{TcpStream, Ipv4Addr},
     time::{SystemTime, UNIX_EPOCH},
     error::Error, fmt::{self, Display},
@@ -19,20 +19,50 @@ impl Connection {
     //todo
     //default port of 3306
     //ip parameter should be able to take ipv4, ipv6, and web domains
+    fn new(ip: &'static str, port: u16) -> Self {
+        Connection { ip: ip, port: port }
+    }
 
-    fn default(&self) -> Self {
-        Connection { ip: "255.255.255.255", port: 3306 }
+    fn default() -> Self {
+        Connection { ip: "127.0.0.1", port: 3306 }
+    }
+
+    fn connect(&self) -> io::Result<TcpStream> {
+        TcpStream::connect(self.ip.to_string() + ":" + &self.port.to_string())
     }
 
 }
-
 struct Logger {
     id: u32,
     connection: Option<Connection>,
 }
 
 impl Logger {
-    //todo
+    fn new(id: u32, connection: Connection) -> Self {
+        Logger {
+            id: id,
+            connection: Some(connection),
+        }
+    }
+
+    fn with_default_connection(id: u32) -> Self {
+        Logger {
+            id: id,
+            connection: Some(Connection::default()),
+        }
+    }
+
+    fn log(&self, message: &str, level: Level) -> Result<(), Box<dyn Error>> {
+        // Create a new log message with the current timestamp.
+        let log_message = LogMessage {
+            message: message.to_string(),
+            timestamp: Utc::now(),
+            level,
+        };
+
+        // Send the log message to the graylog server.
+        send_log_message(&log_message)
+    }
 }
 
 // Struct representing a log message.
